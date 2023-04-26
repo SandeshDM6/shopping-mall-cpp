@@ -9,18 +9,17 @@ from ckeditor.widgets import CKEditorWidget
 
     
 
-class JobForm(forms.ModelForm):
+class ShopForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         forms.ModelForm.__init__(self, *args, **kwargs)
         self.fields['title'].label = "Store Title :"
         self.fields['location'].label = "Store Location :"
-        self.fields['salary'].label = "Avg Spend :"
-        self.fields['description'].label = "Job Description :"
+        self.fields['avg_spend'].label = "Avg Spend :"
+        self.fields['description'].label = "Shop Description :"
         self.fields['tags'].label = "Tags :"
         self.fields['last_date'].label = "Submission Deadline :"
-        #self.fields['company_name'].label = "Branch Name :"
-        self.fields['url'].label = "Logo :"
+        self.fields['url'].label = "Website :"
 
 
 
@@ -34,9 +33,9 @@ class JobForm(forms.ModelForm):
                 'placeholder': 'eg : 1st Floor',
             }
         )
-        self.fields['salary'].widget.attrs.update(
+        self.fields['avg_spend'].widget.attrs.update(
             {
-                'placeholder': '$5 - $150',
+                'placeholder': '€5 - €150',
             }
         )
         self.fields['tags'].widget.attrs.update(
@@ -49,12 +48,7 @@ class JobForm(forms.ModelForm):
                 'placeholder': 'YYYY-MM-DD ',
                 
             }
-        )        
-        # self.fields['company_name'].widget.attrs.update(
-        #     {
-        #         'placeholder': 'Starbucks',
-        #     }
-        # )           
+        )                
         self.fields['url'].widget.attrs.update(
             {
                 'placeholder': 'Logo',
@@ -64,44 +58,29 @@ class JobForm(forms.ModelForm):
 
 
     class Meta:
-        model = Job
+        model = Shop
 
         fields = [
             "title",
             "location",
-            "job_type",
+            "shop_type",
             "category",
-            "salary",
+            "avg_spend",
              "description",
             "tags",
             "last_date",
-            # "company_name",
-            # "company_description",
             "url",
             "picture"
             ]
 
-    def clean_job_type(self):
-        job_type = self.cleaned_data.get('job_type')
-
-        if not job_type:
-            raise forms.ValidationError("Service is required")
-        return job_type
-
-    def clean_category(self):
-        category = self.cleaned_data.get('category')
-
-        if not category:
-            raise forms.ValidationError("category is required")
-        return category
 
 
     def save(self, commit=True):
-        job = super(JobForm, self).save(commit=False)
+        shop = super(ShopForm, self).save(commit=False)
         if commit:
             
-            job.save()
-        return job
+            shop.save()
+        return shop
 
 
 
@@ -110,17 +89,15 @@ class JobForm(forms.ModelForm):
 
 
 
-class JobEditForm(forms.ModelForm):
+class ShopEditForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         forms.ModelForm.__init__(self, *args, **kwargs)
         self.fields['title'].label = "Store Title :"
         self.fields['location'].label = "Store Location :"
-        self.fields['salary'].label = "Avg Spend :"
-        self.fields['description'].label = "Store Description :"
-        # self.fields['tags'].label = "Tags :"
+        self.fields['avg_spend'].label = "Avg Spend :"
+        self.fields['description'].label = "Store Description :"    
         self.fields['last_date'].label = "Dead Line :"
-        #self.fields['company_name'].label = "Branch Name :"
         self.fields['url'].label = "Website :"
 
 
@@ -134,21 +111,16 @@ class JobEditForm(forms.ModelForm):
                 'placeholder': 'eg : 1st Floor',
             }
         )
-        self.fields['salary'].widget.attrs.update(
+        self.fields['avg_spend'].widget.attrs.update(
             {
-                'placeholder': '$5 - $150',
+                'placeholder': '€5 - €150',
             }
         )                 
         self.fields['last_date'].widget.attrs.update(
             {
                 'placeholder': 'YYYY-MM-DD ',
             }
-        )        
-        # self.fields['company_name'].widget.attrs.update(
-        #     {
-        #         'placeholder': 'Company Name',
-        #     }
-        # )           
+        )            
         self.fields['url'].widget.attrs.update(
             {
                 'placeholder': 'https://example.com',
@@ -162,40 +134,23 @@ class JobEditForm(forms.ModelForm):
                 }))
 
     class Meta:
-        model = Job
+        model = Shop
 
         fields = [
             "title",
             "location",
-            "job_type",
+            "shop_type",
             "category",
-            "salary",
+            "avg_spend",
             "description",
             "last_date",
-           # "company_name",
-          #  "company_description",
             "url"
             ]
 
-    def clean_job_type(self):
-        job_type = self.cleaned_data.get('job_type')
-
-        if not job_type:
-            raise forms.ValidationError("Store Type is required")
-        return job_type
-
-    def clean_category(self):
-        category = self.cleaned_data.get('category')
-
-        if not category:
-            raise forms.ValidationError("Category is required")
-        return category
-
-
     def save(self, commit=True):
-        job = super(JobEditForm, self).save(commit=False)
+        shop = super(ShopEditForm, self).save(commit=False)
       
         if commit:
-            job.save()
-        return job
+            shop.save()
+        return shop
 

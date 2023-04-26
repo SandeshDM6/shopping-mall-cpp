@@ -96,9 +96,24 @@ WSGI_APPLICATION = 'shopping.wsgi.application'
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'jobportal',
 #         'USER': 'postgres',
-#         'PASSWORD': '1234',
+#         'PASSWORD': 'macs321',
 #         'HOST': 'localhost',
-#         'PORT': '',
+#         'PORT': '5432',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'shopping-db',
+#         'HOST': 'database-1.ccvpvj32idfp.ap-southeast-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#          'OPTIONS':{ 
+#             'sslmode': 'require',
+#             'options': '-c timezone=UTC',
+#             },
 #     }
 # }
 

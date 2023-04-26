@@ -8,7 +8,7 @@ from ckeditor.fields import RichTextField
 from taggit.managers import TaggableManager
 
 
-JOB_TYPE = (
+SHOP_TYPE = (
     ('1', "Open"),
     ('2', "Closed"),
     ('3', "Coming Soon"),
@@ -25,16 +25,16 @@ class Category(models.Model):
         verbose_name_plural = "categories"
     
 
-class Job(models.Model):
+class Shop(models.Model):
 
     user = models.ForeignKey(User, related_name='User', on_delete=models.CASCADE) 
     title = models.CharField(max_length=300)
     description = RichTextField()
     tags = TaggableManager()
     location = models.CharField(max_length=300)
-    job_type = models.CharField(choices=JOB_TYPE, max_length=1, verbose_name="Shop Type")
+    shop_type = models.CharField(choices=SHOP_TYPE, max_length=1, verbose_name="Shop Type")
     category = models.ForeignKey(Category,related_name='Category', on_delete=models.CASCADE)
-    salary = models.CharField(max_length=30, blank=True, verbose_name="Avg Spend")
+    avg_spend = models.CharField(max_length=30, blank=True, verbose_name="Avg Spend")
     company_name = models.CharField(max_length=300, verbose_name="Branch Name", null=True, blank=True)
     company_description = RichTextField(blank=True, null=True, verbose_name="Branch Description")
     url = models.URLField(max_length=200, verbose_name="Logo")
@@ -58,26 +58,10 @@ class Job(models.Model):
 class Applicant(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 
     def __str__(self):
-        return self.job.title
+        return self.shop.title
 
-
-  
-
-class BookmarkJob(models.Model):
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
-
-
-    def __str__(self):
-        return self.job.title
-
-    class Meta:
-        verbose_name = "Bookmark Job"
-        verbose_name_plural = "Bookmark Jobs"

@@ -40,21 +40,21 @@
 
       <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
         <div class="d-flex align-items-center justify-content-center mb-2">
-          <strong class="number" data-number="{{ total_candidates }}">5</strong>
+          <strong class="number" data-number="{{ total_floors }}">5</strong>
         </div>
         <span class="caption">Floors</span>
       </div>
 
       <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
         <div class="d-flex align-items-center justify-content-center mb-2">
-          <strong class="number" data-number="{{ total_jobs }}">0</strong>
+          <strong class="number" data-number="{{ total_shops }}">0</strong>
         </div>
         <span class="caption">Stores Added</span>
       </div>
 
       <div class="col-6 col-md-6 col-lg-3 mb-5 mb-lg-0">
         <div class="d-flex align-items-center justify-content-center mb-2">
-          <strong class="number" data-number="{{ total_completed_jobs }}">1</strong>
+          <strong class="number" data-number="{{ total_completed_shops }}">1</strong>
         </div>
         <span class="caption">Shopping Mall</span>
       </div>
@@ -77,7 +77,7 @@
     {% if page_obj %}
     <div class="row mb-5 justify-content-center">
       <div class="col-md-7 text-center">
-        <h2 class="section-title mb-2">{{ total_jobs }} Stores Listed</h2>
+        <h2 class="section-title mb-2">{{ total_shops }} Stores Listed</h2>
       </div>
     </div>
 
@@ -87,8 +87,7 @@
       <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
         <a href="{% url 'shoppingapp:single-shop' job.id %}"></a>
         <div class="job-listing-logo">
-          <img src="{% static 'images/i.jpg' %}" alt="Free Website Template by Free-Template.co"
-            class="img-fluid">
+          <img src="{{ job.picture.url }}" style="max-height: 150px; max-width: 150px;" alt="Image">
         </div>
 
         <div class="job-listing-about d-sm-flex custom-width w-100 justify-content-between mx-4">
@@ -170,7 +169,7 @@
 
 $("#ajax_listing_paginattion" ).delegate( "a#ajax_paginator", "click", function( event ) {
 		event.preventDefault();
-    joblist = ``
+    shoplist = ``
     next_paging = ``
     prev_paging = ``
     page_navigator = ``
@@ -185,9 +184,9 @@ $("#ajax_listing_paginattion" ).delegate( "a#ajax_paginator", "click", function(
 				},
         success: function (response) {
           $('#job').html('')
-                    response.job_lists.map(function (job) {
+                    response.shop_lists.map(function (job) {
 
-                        joblist+=`
+                        shoplist+=`
                           <li id="next" class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
                             <a href="/job/${job.id}/"></a>
                               <div class="job-listing-logo">
@@ -228,7 +227,7 @@ $("#ajax_listing_paginattion" ).delegate( "a#ajax_paginator", "click", function(
                         ` 
                       })
 
-                        $('#job').html(joblist)
+                        $('#job').html(shoplist)
                         response.next_page_number != null ?
                         next_paging+=`<a id="ajax_paginator" class="next" href="?page=${ response.next_page_number }">Next</a>`
                         : ''

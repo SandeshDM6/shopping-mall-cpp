@@ -17,23 +17,23 @@ from shoppingapp.permission import *
 from onsale import sale
 User = get_user_model()
 
-name,discount,percent,price = sale.calculate_discounted_price("CCD", 50000, 50)
+name,discount,percent,price = sale.calculate_discounted_price("Zara", 50000, 50)
 
 def home_view(request):
 
-    published_jobs = Job.objects.filter(is_published=True).order_by('-timestamp')
-    jobs = published_jobs.filter(is_closed=False)
-    total_candidates = User.objects.filter(role='employee').count()
+    published_shops = Shop.objects.filter(is_published=True).order_by('-timestamp')
+    shops = published_shops.filter(is_closed=False)
+    # total_candidates = User.objects.filter(role='employee').count()
     total_companies = User.objects.filter(role='employer').count()
-    paginator = Paginator(jobs, 3)
+    paginator = Paginator(shops, 3)
     page_number = request.GET.get('page',None)
     page_obj = paginator.get_page(page_number)
 
     if request.is_ajax():
-        job_lists=[]
-        job_objects_list = page_obj.object_list.values()
-        for job_list in job_objects_list:
-            job_lists.append(job_list)
+        shop_lists=[]
+        shop_objects_list = page_obj.object_list.values()
+        for shop_list in shop_objects_list:
+            shop_lists.append(shop_list)
         
 
         next_page_number = None
@@ -45,7 +45,7 @@ def home_view(request):
             prev_page_number = page_obj.previous_page_number()
 
         data={
-            'job_lists':job_lists,
+            'shop_lists':shop_lists,
             'current_page_no':page_obj.number,
             'next_page_number':next_page_number,
             'no_of_page':paginator.num_pages,
@@ -55,10 +55,10 @@ def home_view(request):
     
     context = {
 
-    'total_candidates': total_candidates,
+    'total_floors': 5,
     'total_companies': total_companies,
-    'total_jobs': len(jobs),
-    'total_completed_jobs':len(published_jobs.filter(is_closed=True)),
+    'total_shops': len(shops),
+    'total_completed_shops':len(published_shops.filter(is_closed=True)),
     'page_obj': page_obj
     }
     print('ok')
@@ -66,8 +66,8 @@ def home_view(request):
 
 
 def shop_list_View(request):
-    job_list = Job.objects.filter(is_published=True,is_closed=False).order_by('-timestamp')
-    paginator = Paginator(job_list, 12)
+    shop_list = Shop.objects.filter(is_published=True,is_closed=False).order_by('-timestamp')
+    paginator = Paginator(shop_list, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -88,7 +88,7 @@ def shop_list_View(request):
 @login_required(login_url=reverse_lazy('account:login'))
 @user_is_employer
 def create_shop_View(request):
-    form = JobForm(request.POST or None, request.FILES)
+    form = ShopForm(request.POST or None, request.FILES or None)
 
     user = get_object_or_404(User, id=request.user.id)
     categories = Category.objects.all()
@@ -116,21 +116,17 @@ def create_shop_View(request):
 
 
 def single_shop_view(request, id):
-    # if cache.get(id):
-    #     job = cache.get(id)
-    # else:
-    job = get_object_or_404(Job, id=id)
-        # cache.set(id,job , 60 * 15)
-    related_job_list = job.tags.similar_objects()
+    shop = get_object_or_404(Shop, id=id)
+    related_shop_list = shop.tags.similar_objects()
 
-    paginator = Paginator(related_job_list, 5)
+    paginator = Paginator(related_shop_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
-        'job': job,
+        'shop': shop,
         'page_obj': page_obj,
-        'total': len(related_job_list),
+        'total': len(related_shop_list),
         'name':name,
         'discount':discount,
         'percent':percent,
@@ -141,43 +137,35 @@ def single_shop_view(request, id):
 
 
 def search_result_view(request):
-    job_list = Job.objects.order_by('-timestamp')
+    shop_list = Shop.objects.order_by('-timestamp')
 
     # Keywords
     if 'job_title_or_company_name' in request.GET:
-        job_title_or_company_name = request.GET['job_title_or_company_name']
+        shop_title_or_company_name = request.GET['job_title_or_company_name']
 
-        if job_title_or_company_name:
-            job_list = job_list.filter(title__icontains=job_title_or_company_name) | job_list.filter(
-                company_name__icontains=job_title_or_company_name)
+        if shop_title_or_company_name:
+            shop_list = shop_list.filter(title__icontains=shop_title_or_company_name) | shop_list.filter(
+                company_name__icontains=shop_title_or_company_name)
 
     # location
     if 'location' in request.GET:
-        location = request.GET['location']
-        if location:
-            job_list = job_list.filter(location__icontains=location)
+        floors = request.GET['location']
+        if floors:
+            shop_list = shop_list.filter(location__icontains=floors)
 
-    # Job Type
-    if 'job_type' in request.GET:
-        job_type = request.GET['job_type']
-        if job_type:
-            job_list = job_list.filter(job_type__iexact=job_type)
+    # Shop Type
+    if 'shop_type' in request.GET:
+        shop_type = request.GET['shop_type']
+        if shop_type:
+            shop_list = shop_list.filter(shop_type__iexact=shop_type)
 
-    # job_title_or_company_name = request.GET.get('text')
-    # location = request.GET.get('location')
-    # job_type = request.GET.get('type')
+    # Shop Type
+    if 'tags' in request.GET:
+        tags = request.GET['tags']
+        if tags:
+            shop_list = shop_list.filter(tags__iexact=tags)
 
-    #     job_list = Job.objects.all()
-    #     job_list = job_list.filter(
-    #         Q(job_type__iexact=job_type) |
-    #         Q(title__icontains=job_title_or_company_name) |
-    #         Q(location__icontains=location)
-    #     ).distinct()
-
-    # job_list = Job.objects.filter(job_type__iexact=job_type) | Job.objects.filter(
-    #     location__icontains=location) | Job.objects.filter(title__icontains=text) | Job.objects.filter(company_name__icontains=text)
-
-    paginator = Paginator(job_list, 10)
+    paginator = Paginator(shop_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -188,81 +176,15 @@ def search_result_view(request):
     return render(request, 'shoppingapp/result.html', context)
 
 
-# @login_required(login_url=reverse_lazy('account:login'))
-# @user_is_employee
-# def apply_job_view(request, id):
-
-#     form = shoppingapplyForm(request.POST or None)
-
-#     user = get_object_or_404(User, id=request.user.id)
-#     applicant = Applicant.objects.filter(user=user, job=id)
-
-#     if not applicant:
-#         if request.method == 'POST':
-
-#             if form.is_valid():
-#                 instance = form.save(commit=False)
-#                 instance.user = user
-#                 instance.save()
-
-#                 messages.success(
-#                     request, 'You have successfully applied for this job!')
-#                 return redirect(reverse("shoppingapp:single-job", kwargs={
-#                     'id': id
-#                 }))
-
-#         else:
-#             return redirect(reverse("shoppingapp:single-job", kwargs={
-#                 'id': id
-#             }))
-
-#     else:
-
-#         messages.error(request, 'You already applied for the Job!')
-
-#         return redirect(reverse("shoppingapp:single-job", kwargs={
-#             'id': id
-#         }))
-
-
-@login_required(login_url=reverse_lazy('account:login'))
-def dashboard_view(request):
-    """
-    """
-    jobs = []
-    savedjobs = []
-    appliedjobs = []
-    total_applicants = {}
-    if request.user.role == 'employer':
-
-        jobs = Job.objects.filter(user=request.user.id)
-        for job in jobs:
-            count = Applicant.objects.filter(job=job.id).count()
-            total_applicants[job.id] = count
-
-    if request.user.role == 'employee':
-        savedjobs = BookmarkJob.objects.filter(user=request.user.id)
-        appliedjobs = Applicant.objects.filter(user=request.user.id)
-    context = {
-
-        'jobs': jobs,
-        'savedjobs': savedjobs,
-        'appliedjobs':appliedjobs,
-        'total_applicants': total_applicants
-    }
-
-    return render(request, 'shoppingapp/dashboard.html', context)
-
-
 @login_required(login_url=reverse_lazy('account:login'))
 @user_is_employer
 def delete_shop_view(request, id):
 
-    job = get_object_or_404(Job, id=id, user=request.user.id)
+    shop = get_object_or_404(Shop, id=id, user=request.user.id)
 
-    if job:
+    if shop:
 
-        job.delete()
+        shop.delete()
         messages.success(request, 'Your Store  was successfully deleted!')
 
     return redirect('shoppingapp:dashboard')
@@ -270,106 +192,11 @@ def delete_shop_view(request, id):
 
 @login_required(login_url=reverse_lazy('account:login'))
 @user_is_employer
-def make_complete_shop_view(request, id):
-    job = get_object_or_404(Job, id=id, user=request.user.id)
-
-    if job:
-        try:
-            job.is_closed = True
-            job.save()
-            messages.success(request, 'Your Shop was marked closed!')
-        except:
-            messages.success(request, 'Something went wrong !')
-            
-    return redirect('shoppingapp:dashboard')
-
-
-
-# @login_required(login_url=reverse_lazy('account:login'))
-# @user_is_employer
-# def all_applicants_view(request, id):
-
-#     all_applicants = Applicant.objects.filter(job=id)
-
-#     context = {
-
-#         'all_applicants': all_applicants
-#     }
-
-#     return render(request, 'shoppingapp/all-applicants.html', context)
-
-
-# @login_required(login_url=reverse_lazy('account:login'))
-# @user_is_employee
-# def delete_bookmark_view(request, id):
-
-#     job = get_object_or_404(BookmarkJob, id=id, user=request.user.id)
-
-#     if job:
-
-#         job.delete()
-#         messages.success(request, 'Saved Job was successfully deleted!')
-
-#     return redirect('shoppingapp:dashboard')
-
-
-# @login_required(login_url=reverse_lazy('account:login'))
-# @user_is_employer
-# def applicant_details_view(request, id):
-
-#     applicant = get_object_or_404(User, id=id)
-
-#     context = {
-
-#         'applicant': applicant
-#     }
-
-#     return render(request, 'shoppingapp/applicant-details.html', context)
-
-
-# @login_required(login_url=reverse_lazy('account:login'))
-# @user_is_employee
-# def job_bookmark_view(request, id):
-
-#     form = JobBookmarkForm(request.POST or None)
-
-#     user = get_object_or_404(User, id=request.user.id)
-#     applicant = BookmarkJob.objects.filter(user=request.user.id, job=id)
-
-#     if not applicant:
-#         if request.method == 'POST':
-
-#             if form.is_valid():
-#                 instance = form.save(commit=False)
-#                 instance.user = user
-#                 instance.save()
-
-#                 messages.success(
-#                     request, 'You have successfully save this job!')
-#                 return redirect(reverse("shoppingapp:single-job", kwargs={
-#                     'id': id
-#                 }))
-
-#         else:
-#             return redirect(reverse("shoppingapp:single-job", kwargs={
-#                 'id': id
-#             }))
-
-#     else:
-#         messages.error(request, 'You already saved this Job!')
-
-#         return redirect(reverse("shoppingapp:single-job", kwargs={
-#             'id': id
-#         }))
-
-
-@login_required(login_url=reverse_lazy('account:login'))
-@user_is_employer
 def shop_edit_view(request, id=id):
 
-    job = get_object_or_404(Job, id=id, user=request.user.id)
+    shop = get_object_or_404(Shop, id=id, user=request.user.id)
     categories = Category.objects.all()
-    form = JobEditForm(request.POST or None, instance=job)
+    form = ShopEditForm(request.POST or None, instance=shop)
     if form.is_valid():
         instance = form.save(commit=False)
         instance.save()
