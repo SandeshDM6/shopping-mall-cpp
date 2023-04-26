@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/Users/apple/Documents/sandesh/Shopping Mall Portal/myvenv/bin/python3" "$0" "$@"
-' '''
+#!/home/ec2-user/environment/shopping-mall-cpp/myvenv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

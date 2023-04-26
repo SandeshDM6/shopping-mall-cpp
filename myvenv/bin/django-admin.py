@@ -1,4 +1,4 @@
-#!/Users/apple/Documents/sandesh/Shopping Mall Portal/myvenv/bin/python3
+#!/home/ec2-user/environment/shopping-mall-cpp/myvenv/bin/python3
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 
