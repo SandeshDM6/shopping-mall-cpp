@@ -23,9 +23,8 @@ def home_view(request):
 
     published_shops = Shop.objects.filter(is_published=True).order_by('-timestamp')
     shops = published_shops.filter(is_closed=False)
-    # total_candidates = User.objects.filter(role='employee').count()
     total_companies = User.objects.filter(role='employer').count()
-    paginator = Paginator(shops, 3)
+    paginator = Paginator(shops, 15)
     page_number = request.GET.get('page',None)
     page_obj = paginator.get_page(page_number)
 
@@ -140,8 +139,8 @@ def search_result_view(request):
     shop_list = Shop.objects.order_by('-timestamp')
 
     # Keywords
-    if 'job_title_or_company_name' in request.GET:
-        shop_title_or_company_name = request.GET['job_title_or_company_name']
+    if 'shop_title' in request.GET:
+        shop_title_or_company_name = request.GET['shop_title']
 
         if shop_title_or_company_name:
             shop_list = shop_list.filter(title__icontains=shop_title_or_company_name) | shop_list.filter(
