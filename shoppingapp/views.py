@@ -17,7 +17,7 @@ from shoppingapp.permission import *
 from onsale import sale
 User = get_user_model()
 
-name,discount,percent,price = sale.calculate_discounted_price("Zara", 50000, 50)
+name,discount,percent,price = sale.calculate_discounted_price("Disney store", 50000, 50)
 
 def home_view(request):
 
