@@ -41,9 +41,9 @@
               <span class="m-2"><span class="icon-clock-o mr-2"></span>
                 <span class="text-primary">
 
-                  {% if shop.job_type == '1' %}
+                  {% if shop.shop_type == '1' %}
                   Open
-                  {% elif shop.job_type == '2'%}
+                  {% elif shop.shop_type == '2'%}
                   Closed
                   {% else  %}
                   Coming Soon
@@ -101,9 +101,9 @@
           <ul class="list-unstyled pl-3 mb-0">
             <li class="mb-2"><strong class="text-black">Published on:</strong> {{ shop.timestamp|date:"d M Y" }}</li>
             <li class="mb-2"><strong class="text-black">Store Status:</strong>
-              {% if shop.job_type == '1' %}
+              {% if shop.shop_type == '1' %}
               Open
-              {% elif shop.job_type == '2'%}
+              {% elif shop.shop_type == '2'%}
               Closed
               {% else  %}
               Coming Soon
@@ -156,22 +156,21 @@
       <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
         <a href="{% url 'shoppingapp:single-shop' shop.id %}"></a>
         <div class="job-listing-logo">
-          <img src="{% static 'images/i.jpg' %}" alt="Image" class="img-fluid">
+          <img src="{{ shop.picture.url }}" style="max-height: 150px; max-width: 150px;" alt="Image">
         </div>
 
         <div class="job-listing-about d-sm-flex custom-width w-100 justify-content-between mx-4">
           <div class="job-listing-position custom-width w-50 mb-3 mb-sm-0">
             <h2>{{ shop.title}}</h2>
-            <strong>{{ shop.company_name }}</strong>
           </div>
           <div class="job-listing-location mb-3 mb-sm-0 custom-width w-25">
             <span class="icon-room"></span> {{ shop.location }}
           </div>
           <div class="job-listing-meta">
             <span class="badge badge-danger">
-              {% if shop.job_type == '1' %}
+              {% if shop.shop_type == '1' %}
               Open
-              {% elif shop.job_type == '2'%}
+              {% elif shop.shop_type == '2'%}
               Closed
               {% else  %}
               Coming Soon

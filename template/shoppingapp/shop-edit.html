@@ -47,10 +47,10 @@
                     {% endif %}
             {% csrf_token %}
                 {% for field in form %}
-                    {% if field.name == 'job_type'  %}
+                    {% if field.name == 'shop_type'  %}
                         <div class="form-group">
-                        <label for="job-type">Store Type</label>
-                        <select name="job_type" class="selectpicker border rounded" id="job-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Store Type">
+                        <label for="shop-type">Store Type</label>
+                        <select name="shop_type" class="selectpicker border rounded" id="shop-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Store Type">
                             
                             
                               <option value="1" {% if field.value == '1' %} selected {% endif %}>Open</option>
@@ -61,8 +61,8 @@
                     
                     {% elif field.name == 'category' %}
                         <div class="form-group">
-                        <label for="job-type">Category</label>
-                        <select name="category" class="selectpicker border rounded" id="job-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Shop Type">
+                        <label for="shop-type">Category</label>
+                        <select name="category" class="selectpicker border rounded" id="shop-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Shop Type">
                               
                               {% for category in categories %}
                               
@@ -89,7 +89,7 @@
 
                         {% elif field.name == 'description' %}
                               <div class="form-group">
-                                <label for="job-type">Description</label>
+                                <label for="shop-type">Description</label>
                                  <div class="">
                                   {{ form.media }}
                                   {{ form.description }}
@@ -97,7 +97,7 @@
                               </div>
                         {% elif field.name == 'company_description' %}
                               <div class="form-group">
-                                <label for="job-type">Company Description</label>
+                                <label for="shop-type">Company Description</label>
                               <div class="">
                                 
                                   {{ form.media }}
